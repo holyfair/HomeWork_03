@@ -1,5 +1,7 @@
 import java.util.Arrays;
 
+import javax.swing.JOptionPane;
+
 public class Group {
 
 	private Student[] group = new Student[10];
@@ -8,101 +10,184 @@ public class Group {
 		this.group = group;
 	}
 
-	
 	public Group() {
 		super();
 	}
 
-
+	
+	
 	public Student[] getGroup() {
 		return group;
 	}
+
+	public boolean removeStudent(Student student) {
+		for (int i = 0; i < group.length; i++) {
+			if (group[i] == student) {
+				group[i] = null;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void setStudent() throws GenderException {
+		int age;
+		String name;
+		boolean sex;
+		String facult;
+		int course;
+
+		for (;;) {
+
+			try {
+				age = Integer.valueOf(JOptionPane.showInputDialog("Input an age"));
+				break;
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(null, "Error number format");
+			}
+		}
+				name = String.valueOf(JOptionPane.showInputDialog("Input a name"));
+		
 	
+	for (;;) {
+
+		try {
+			String temp = String.valueOf(JOptionPane.showInputDialog("This is a man? : yes or no"));
+			if(temp.equals("yes")) {
+				sex = true;
+				break;
+			}
+			if(temp.equals("no")) {
+				sex = false;
+				break;
+			}else {
+				throw new GenderException();
+			}
+		} catch (GenderException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage());
+		}
+	}
+	facult = String.valueOf(JOptionPane.showInputDialog("Input a facult: "));
+	for (;;) {
+
+		try {
+			course = Integer.valueOf(JOptionPane.showInputDialog("Input a course: "));
+			break;
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "Error number format");
+		}
+	}
+	int index = -1;
+	Student student = new Student(name, age, sex, facult, course);
+	for (int i = group.length - 1; i >= 0; i--) {
+		if (group[i] == null) {
+			index = i;
+		}
+	}
+	try {
+		if (index != -1) {
+			group[index] = student;
+		} else {
+			throw new FullGroupException();
+		}
+	} catch (FullGroupException e) {
+		System.out.println(e.getMessage());
+	}
+	}
+
+	
+
+
 	public void setStudent(Student student) {
 		int index = -1;
-		for(int i = group.length - 1; i >= 0; i--) {
-			if(group[i] == null) {
+		for (int i = group.length - 1; i >= 0; i--) {
+			if (group[i] == null) {
 				index = i;
 			}
 		}
 		try {
-		if(index != -1) {
-			group[index] = student;
-		}else {
-			throw new FullGroupException();
+			if (index != -1) {
+				group[index] = student;
+			} else {
+				throw new FullGroupException();
+			}
+		} catch (FullGroupException e) {
+			System.out.println(e.getMessage());
 		}
-	}catch(FullGroupException e) {
-		System.out.println(e.getMessage());
 	}
-}
-	
+
 	public void setStudent(Student student, int index) {
 		try {
-		if(index >= 0 && index < group.length) {
-			group[index] = student;
-		}else {
-			throw new IllegalIndexException();
+			if (index >= 0 && index < group.length) {
+				group[index] = student;
+			} else {
+				throw new IllegalIndexException();
+			}
+		} catch (IllegalIndexException e) {
+			System.out.println(e.getMessage());
 		}
-	}catch(IllegalIndexException e) {
-		System.out.println(e.getMessage());
 	}
-}
+
 	public String searchOfStudent(String name) {
-		for(int i = 0; i < group.length; i++) {
-			if(group[i] != null && group[i].getName().equals(name)) {
+		for (int i = 0; i < group.length; i++) {
+			if (group[i] != null && group[i].getName().equals(name)) {
 				return group[i].getName();
 			}
 		}
 		return "Name is not found";
 	}
 	
-	static void swap(Student[] group, int left, int right) {
-	    if (left != right) {
-	        Student temp = group[left];
-	        group[left] = group[right];
-	        group[right] = temp;
-	    }
+	private int compareToBoolean(boolean a, boolean b) {
+		if(a == true && b == false) {
+			return 1;
+		}
+		if(a == false && b == true) {
+			return -1;
+		}
+		return 0;
 	}
-	private Student[] sorter(Student[] group){
-        for (int i = 1; i < group.length - 1; i++) {
-            for (int j = i - 1; j >= 0; j--) {
-            	int state = 0;
-                if (group[j] == null) {
-                    swap(group, j, j + 1);
-                } else {
-                    if(group[j + 1] != null && group[j].getName().charAt(0) > group[j + 1].getName().charAt(0)) {
-                    	swap(group, j, j + 1);
-                    }else {
-                    		if(group[j + 1] != null) {
-                    			while(state < group[j].getName().length() && state < group[j + 1].getName().length() && (group[j].getName().charAt(state) == group[j + 1].getName().charAt(state))) {
-                        			state++;
-                        			if(group[j].getName().charAt(state) > group[j + 1].getName().charAt(state)) {
-                                    	swap(group, j, j + 1);
-                                    	break;
-                                    }
-                        		}
-                    		}
-                    	break;
-                    }
-                    
-                }
-            }
-        }
-		return group;
+
+	public void sorter(String parametr) {
+		try {
+			
+		if(parametr.equals("name")) {
+			Arrays.sort(group, (a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
+					? CheckNull.checkNull(a, b) : a.getName().compareTo(b.getName()));
+		}
+		if(parametr.equals("age")) {
+			Arrays.sort(group, (a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
+					? CheckNull.checkNull(a, b) : a.getAge() - b.getAge());
+		}
+		if(parametr.equals("sex")) {
+			
+			Arrays.sort(group, (a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
+					? CheckNull.checkNull(a, b) : compareToBoolean(a.getSex(), b.getSex()));
+		}
+		if(parametr.equals("facult")) {
+			Arrays.sort(group, (a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
+					? CheckNull.checkNull(a, b) : a.getFacult().compareTo(b.getFacult()));
+		}
+		if(parametr.equals("course")) {
+			Arrays.sort(group, (a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
+					? CheckNull.checkNull(a, b) : a.getCourse() - b.getCourse());
+		}else {
+			throw new IllegalParametrException();
+		}
+		}catch(IllegalParametrException e) {
+			System.out.println(e.getMessage());
+		}
 	}
-	
+
 	@Override
 	public String toString() {
-		group = sorter(group);
-		String sb = "";
-		for(int i = 0; i < group.length; i++) {
-			if(group[i] != null) {
-				sb += new String(i + " - " + group[i].getName() + "\n");
+		sorter("name");
+		String str = "";
+		for (int i = 0; i < group.length; i++) {
+			if (group[i] != null) {
+				str += new String(i + " - " + group[i].getName() + "\n");
 			}
 		}
-		return sb;
+		return str;
 	}
-	
-	
-	
+
 }
