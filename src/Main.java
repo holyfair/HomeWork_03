@@ -11,10 +11,10 @@ public class Main {
         Student studentFour = new Student("Lesha", 18, true, "FRGTB", 2);
         
         Group group = new Group();
-        group.setStudent(studentSix, 6);
-        group.setStudent(studentFive, 7);
-        group.setStudent(studentThree, 8);
-        group.setStudent(studentTwo, 2);
+        group.setStudent(studentSix);
+        group.setStudent(studentFive);
+        group.setStudent(studentThree);
+        group.setStudent(studentTwo);
         group.setStudent(studentFour);
         File file = new File("Group");
         

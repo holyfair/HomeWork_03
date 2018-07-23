@@ -1,5 +1,7 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -9,9 +11,9 @@ public class Group implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Student[] group = new Student[10];
-
-	public Group(Student[] group) {
+	private List<Student> group = new ArrayList<>();
+	
+	public Group(List<Student> group) {
 		this.group = group;
 	}
 
@@ -21,18 +23,12 @@ public class Group implements Serializable{
 
 	
 	
-	public Student[] getGroup() {
+	public List<Student> getGroup() {
 		return group;
 	}
 
 	public boolean removeStudent(Student student) {
-		for (int i = 0; i < group.length; i++) {
-			if (group[i] == student) {
-				group[i] = null;
-				return true;
-			}
-		}
-		return false;
+		return group.remove(student);
 	}
 
 	public void setStudent() throws GenderException {
@@ -82,61 +78,21 @@ public class Group implements Serializable{
 			JOptionPane.showMessageDialog(null, "Error number format");
 		}
 	}
-	int index = -1;
 	Student student = new Student(name, age, sex, facult, course);
-	for (int i = group.length - 1; i >= 0; i--) {
-		if (group[i] == null) {
-			index = i;
-		}
-	}
-	try {
-		if (index != -1) {
-			group[index] = student;
-		} else {
-			throw new FullGroupException();
-		}
-	} catch (FullGroupException e) {
-		System.out.println(e.getMessage());
-	}
+	group.add(student);
 	}
 
 	
 
 
 	public void setStudent(Student student) {
-		int index = -1;
-		for (int i = group.length - 1; i >= 0; i--) {
-			if (group[i] == null) {
-				index = i;
-			}
-		}
-		try {
-			if (index != -1) {
-				group[index] = student;
-			} else {
-				throw new FullGroupException();
-			}
-		} catch (FullGroupException e) {
-			System.out.println(e.getMessage());
-		}
-	}
-
-	public void setStudent(Student student, int index) {
-		try {
-			if (index >= 0 && index < group.length) {
-				group[index] = student;
-			} else {
-				throw new IllegalIndexException();
-			}
-		} catch (IllegalIndexException e) {
-			System.out.println(e.getMessage());
-		}
+		group.add(student);
 	}
 
 	public String searchOfStudent(String name) {
-		for (int i = 0; i < group.length; i++) {
-			if (group[i] != null && group[i].getName().equals(name)) {
-				return group[i].getName();
+		for(Student student : group) {
+			if(student.getName().equals(name)) {
+				return name;
 			}
 		}
 		return "Name is not found";
@@ -156,24 +112,27 @@ public class Group implements Serializable{
 		try {
 			
 		if(parametr.equals("name")) {
-			Arrays.sort(group, (a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
+			group.sort((a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
 					? CheckNull.checkNull(a, b) : a.getName().compareTo(b.getName()));
+			return;
 		}
 		if(parametr.equals("age")) {
-			Arrays.sort(group, (a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
+			group.sort((a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
 					? CheckNull.checkNull(a, b) : a.getAge() - b.getAge());
+			return;
 		}
 		if(parametr.equals("sex")) {
-			
-			Arrays.sort(group, (a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
+			group.sort((a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
 					? CheckNull.checkNull(a, b) : compareToBoolean(a.getSex(), b.getSex()));
+			return;
 		}
 		if(parametr.equals("facult")) {
-			Arrays.sort(group, (a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
+			group.sort((a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
 					? CheckNull.checkNull(a, b) : a.getFacult().compareTo(b.getFacult()));
+			return;
 		}
 		if(parametr.equals("course")) {
-			Arrays.sort(group, (a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
+			group.sort((a, b) -> CheckNull.checkNull(a, b) != CheckNull.NOT_NULL
 					? CheckNull.checkNull(a, b) : a.getCourse() - b.getCourse());
 		}else {
 			throw new IllegalParametrException();
@@ -185,36 +144,11 @@ public class Group implements Serializable{
 
 	@Override
 	public String toString() {
-//		sorter("name");
-		String str = "";
-		for (int i = 0; i < group.length; i++) {
-			if (group[i] != null) {
-				str += new String(i + " - " + group[i].getName() + "\n");
-			}
-		}
-		return str;
+		sorter("name");
+		StringBuilder sb = new StringBuilder();
+		group.forEach((student) -> sb.append(student.toString()).append(System.lineSeparator()));
+		return sb.toString();
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(group);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Group other = (Group) obj;
-		if (!Arrays.equals(group, other.group))
-			return false;
-		return true;
-	}
 
 }
